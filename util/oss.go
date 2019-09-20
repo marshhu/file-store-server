@@ -12,8 +12,8 @@ var ossCli *oss.Client
 const(
 	OSSEndpoint string = "oss-cn-shenzhen.aliyuncs.com"
 	OSSBucket string = "ma-image"
-	OSSAccessKeyID string = "1111"
-	OSSAccessKeySecret string = "1111"
+	OSSAccessKeyID string = "LTAI4FkbJDqShWuWXhxdjKtz"
+	OSSAccessKeySecret string = "B9goqfTS94uyVl94rtJJXMGzJQPtuN"
 )
 
 // Client : 创建oss client对象

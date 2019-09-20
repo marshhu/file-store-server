@@ -49,6 +49,16 @@ func UploadSingleHandler(c *gin.Context){
 	// 游标重新回到文件头部
 	src.Seek(0,0)
 	fileName := fileSha1 + util.GetExt(f.Filename) //文件名唯一
+	//如果文件已存在 获取文件信息并返回
+	if dbos.IsExistFileInfo(fileSha1){
+		fileInfo,_ := dbos.GetFileInfo(fileSha1)
+		c.JSON(http.StatusOK, resp.Response{
+			Code: resp.SUCCESS,
+			Msg:  "上传文件成功",
+			Data: map[string]string{"file_sha1":fileInfo.FileSha1,"file_name":fileInfo.FileName,"file_address":fileInfo.FileAddress},
+		})
+		return
+	}
 	//上传到云OSS
 	fileAddress,err := util.PutObjectToOSS(fileName,src)
 	if err != nil {
@@ -62,7 +72,6 @@ func UploadSingleHandler(c *gin.Context){
    //保存文件信息
 	err = dbos.AddFileInfo(fileSha1,fileName,fileSize,fileAddress)
 	if err != nil{
-		util.Bucket().DeleteObject(fileName) //保存失败，删除云OSS对象
 		c.JSON(http.StatusInternalServerError, resp.Response{
 			Code: resp.ERROR,
 			Msg:  "保存文件信息到数据库失败",
