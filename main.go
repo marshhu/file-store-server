@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/marshhu/file-store-server/handler"
 	"github.com/marshhu/file-store-server/middleware"
-	"net/http"
 )
 func main() {
 	// Creates a router without any middleware by default
@@ -21,14 +20,9 @@ func main() {
 	// 允许使用跨域请求  全局中间件
 	r.Use(middleware.Cors())
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
     api := r.Group("/api")
     {
+		api.GET("/ping", handler.PingHandler)
 		api.POST("/uploadSingle",handler.UploadSingleHandler)
 		api.POST("/uploadMulti",handler.UploadMultiHandler)
 	}
