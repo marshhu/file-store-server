@@ -3,15 +3,13 @@ package dbos
 import "testing"
 
 func clearTables() {
-dbConn.Exec("truncate fileInfo")
+	dbConn.Exec("truncate file_info")
 }
 
 func TestMain(m *testing.M) {
 	clearTables()
 	m.Run()
 }
-
-
 
 func TestAddFileInfo(t *testing.T) {
 	err := AddFileInfo("erfegfb45t5y6u76ihgmu7", "avatar.jpg",23400,"/tmp/avatar.jpg")

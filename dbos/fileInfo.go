@@ -1,6 +1,9 @@
 package dbos
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type FileInfo struct {
 	ID         int64      `json:"id"`
@@ -14,14 +17,17 @@ type FileInfo struct {
 }
 
 func AddFileInfo(fileSha1 string,fileName string,fileSize int64,fileAddress string) error{
-	stmtIns, err := dbConn.Prepare("Insert into file_info(file_sha1,file_name,file_size,file_address,create_at,update_at,status) values(?,?,?,?,?,?,?);")
-	if err != nil {
-		return err
+    if dbConn != nil{
+		stmtIns, err := dbConn.Prepare("Insert into file_info(file_sha1,file_name,file_size,file_address,create_at,update_at,status) values(?,?,?,?,?,?,?);")
+		if err != nil {
+			return err
+		}
+		_,err = stmtIns.Exec(fileSha1, fileName,fileSize,fileAddress,time.Now(),time.Now(),1)
+		if err != nil{
+			return  err
+		}
+		defer stmtIns.Close()
+		return nil
 	}
-	_,err = stmtIns.Exec(fileSha1, fileName,fileSize,fileAddress,time.Now(),time.Now(),1)
-	if err != nil{
-		return  err
-	}
-	defer stmtIns.Close()
-	return nil
+	return  errors.New("数据库连接失败")
 }
