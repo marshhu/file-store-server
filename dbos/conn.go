@@ -4,21 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/marshhu/file-store-server/conf"
 	"log"
-)
-const(
-	Host string =   "www.dooyar.com"
-	Port int =   3306
-	User string =   "root"
-	Pwd string =   "Hdd123456"
-	DbName string = "fileserver"
 )
 var (
 	dbConn *sql.DB
 	err error
 	)
 
-var conStr = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8",User,Pwd,Host, Port,DbName)
+var conStr = fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",conf.DBSetting.User,conf.DBSetting.Password,conf.DBSetting.Host,conf.DBSetting.DBName)
 
 func init(){
 	dbConn, err = sql.Open("mysql", conStr)

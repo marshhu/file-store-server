@@ -1,31 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/marshhu/file-store-server/handler"
-	"github.com/marshhu/file-store-server/middleware"
+	"github.com/marshhu/file-store-server/conf"
+	"github.com/marshhu/file-store-server/handler/router"
+	"net/http"
 )
+
 func main() {
-	// Creates a router without any middleware by default
-	r := gin.New()
-
-	// Global middleware
-	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
-	// By default gin.DefaultWriter = os.Stdout
-	r.Use(gin.Logger())
-
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gin.Recovery())
-
-	// 允许使用跨域请求  全局中间件
-	r.Use(middleware.Cors())
-
-    api := r.Group("/api")
-    {
-		api.GET("/ping", handler.PingHandler)
-		api.POST("/uploadSingle",handler.UploadSingleHandler)
-		api.POST("/uploadMulti",handler.UploadMultiHandler)
+	gin.SetMode(conf.ServerSetting.RunMode)
+	server := &http.Server{
+		Addr:           fmt.Sprintf(":%d", conf.ServerSetting.HttpPort),
+		Handler:        router.InitRouter(),
+		ReadTimeout:    conf.ServerSetting.ReadTimeout,
+		WriteTimeout:   conf.ServerSetting.WriteTimeout,
+		MaxHeaderBytes: 1 << 20,
 	}
 
-	r.Run(":8080")
+	server.ListenAndServe()
 }

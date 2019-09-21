@@ -3,26 +3,20 @@ package util
 import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/marshhu/file-store-server/conf"
 	"io"
 	"log"
 )
 
 var ossCli *oss.Client
 
-const(
-	OSSEndpoint string = "oss-cn-shenzhen.aliyuncs.com"
-	OSSBucket string = "ma-image"
-	OSSAccessKeyID string = "LTAI4FkbJDqShWuWXhxdjKtz"
-	OSSAccessKeySecret string = "B9goqfTS94uyVl94rtJJXMGzJQPtuN"
-)
-
 // Client : 创建oss client对象
 func Client() *oss.Client {
 	if ossCli != nil {
 		return ossCli
 	}
-	ossCli, err := oss.New("http://"+ OSSEndpoint,
-		OSSAccessKeyID, OSSAccessKeySecret)
+	ossCli, err := oss.New("http://"+ conf.OssSetting.OSSEndpoint,
+		conf.OssSetting.OSSAccessKeyID, conf.OssSetting.OSSAccessKeySecret)
 	if err != nil {
 		log.Fatal(err)
 		return nil
@@ -34,7 +28,7 @@ func Client() *oss.Client {
 func Bucket() *oss.Bucket {
 	cli := Client()
 	if cli != nil {
-		bucket, err := cli.Bucket(OSSBucket)
+		bucket, err := cli.Bucket(conf.OssSetting.OSSBucket)
 		if err != nil {
 			log.Fatal(err)
 			return nil
@@ -56,7 +50,7 @@ func GetSignURL(objName string) string {
 
 //获取公共访问URL
 func GetPublicURL(objName string) string{
-	return  fmt.Sprintf("http://%s.%s/%s",OSSBucket,OSSEndpoint,objName)
+	return  fmt.Sprintf("http://%s.%s/%s",conf.OssSetting.OSSBucket,conf.OssSetting.OSSEndpoint,objName)
 }
 
 func PutObjectToOSS(objectKey string,reader io.Reader)(string,error){

@@ -60,16 +60,16 @@ func GetFileInfo(fileSha1 string) (*FileInfo,error){
 		return nil,err
 	}
 	fileInfo := FileInfo{}
-	var create_time string
-	var update_time string
-	err = stmtOut.QueryRow(fileSha1).Scan(&fileInfo.ID,&fileInfo.FileSha1,&fileInfo.FileName,&fileInfo.FileSize,&fileInfo.FileAddress,&create_time,&update_time,&fileInfo.Status)
+	var createTime string
+	var updateTime string
+	err = stmtOut.QueryRow(fileSha1).Scan(&fileInfo.ID,&fileInfo.FileSha1,&fileInfo.FileName,&fileInfo.FileSize,&fileInfo.FileAddress,&createTime,&updateTime,&fileInfo.Status)
 	if err !=nil && err != sql.ErrNoRows{
 		return nil, err
 	}
 	if err == sql.ErrNoRows{
 		return nil,nil
 	}
-    fileInfo.CreateAt,_ = time.Parse("2006-01-02 15:04:05",create_time)
-	fileInfo.UpdateAt,_ = time.Parse("2006-01-02 15:04:05",update_time)
+    fileInfo.CreateAt,_ = time.Parse("2006-01-02 15:04:05",createTime)
+	fileInfo.UpdateAt,_ = time.Parse("2006-01-02 15:04:05",updateTime)
 	return &fileInfo,nil
 }

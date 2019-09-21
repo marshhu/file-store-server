@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ func UploadSingleHandler(c *gin.Context){
 	f, _ := c.FormFile("file")
 	if f == nil{
 		c.JSON(http.StatusBadRequest, resp.Response{
-			Code: resp.ERROR,
+			Code: resp.INVALID_PARAMS,
 			Msg:  "请选择上传文件",
 			Data: nil,
 		})
@@ -31,7 +31,7 @@ func UploadSingleHandler(c *gin.Context){
 	log.Println(f.Filename)
 
 	//// Upload the file to specific dst.
-    //dst := "tmp/"+f.Filename
+    //dst := "upload/"+f.Filename
 	//err := c.SaveUploadedFile(f, dst)
 	//if err != nil{
 	//	c.JSON(http.StatusInternalServerError, resp.Response{
@@ -59,6 +59,7 @@ func UploadSingleHandler(c *gin.Context){
 		})
 		return
 	}
+
 	//上传到云OSS
 	fileAddress,err := util.PutObjectToOSS(fileName,src)
 	if err != nil {
@@ -96,7 +97,7 @@ func UploadMultiHandler(c *gin.Context){
 		log.Println(f.Filename)
 
 		// Upload the file to specific dst.
-		dst := "tmp/"+f.Filename
+		dst := "upload/"+f.Filename
 		c.SaveUploadedFile(f, dst)
 	}
 
