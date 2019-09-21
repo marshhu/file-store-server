@@ -2,7 +2,6 @@ package dbos
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 	"time"
 )
@@ -19,19 +18,16 @@ type FileInfo struct {
 }
 
 func AddFileInfo(fileSha1 string,fileName string,fileSize int64,fileAddress string) error{
-    if dbConn != nil{
-		stmtIns, err := dbConn.Prepare("Insert into file_info(file_sha1,file_name,file_size,file_address,create_at,update_at,status) values(?,?,?,?,?,?,?);")
-		if err != nil {
-			return err
-		}
-		_,err = stmtIns.Exec(fileSha1, fileName,fileSize,fileAddress,time.Now(),time.Now(),1)
-		if err != nil{
-			return  err
-		}
-		defer stmtIns.Close()
-		return nil
+	stmtIns, err := dbConn.Prepare("Insert into file_info(file_sha1,file_name,file_size,file_address,create_at,update_at,status) values(?,?,?,?,?,?,?);")
+	if err != nil {
+		return err
 	}
-	return  errors.New("数据库连接失败")
+	_,err = stmtIns.Exec(fileSha1, fileName,fileSize,fileAddress,time.Now(),time.Now(),1)
+	if err != nil{
+		return  err
+	}
+	defer stmtIns.Close()
+	return nil
 }
 
 func IsExistFileInfo(fileSha1 string) bool{

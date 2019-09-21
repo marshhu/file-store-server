@@ -1,24 +1,28 @@
 package dbos
 
-import "testing"
+import (
+	"testing"
+)
 
 func clearTables() {
 	dbConn.Exec("truncate file_info")
+	dbConn.Exec("truncate user")
 }
 
 func TestMain(m *testing.M) {
 	clearTables()
 	m.Run()
 }
+
 var fileSha1 string = "erfegfb45t5y6u76ihgmu7"
 
-func TestWorkFlow(t *testing.T) {
+func TestFileInfoWorkFlow(t *testing.T) {
 	t.Run("Add", testAddFileInfo)
 	t.Run("Exist", testIsExistFileInfo)
 	t.Run("Get", testGetFileInfo)
 }
 func testAddFileInfo(t *testing.T) {
-	err := AddFileInfo(fileSha1, "avatar.jpg",23400,"/tmp/avatar.jpg")
+	err := AddFileInfo(fileSha1, "avatar.jpg",23400,"tmp/avatar.jpg")
 	if err != nil {
 		t.Errorf("Error of AddFileInfo:%v", err)
 	}
