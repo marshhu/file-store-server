@@ -18,6 +18,7 @@ func JWT() gin.HandlerFunc {
 				Msg:  "未经授权，无访问权限",
 				Data: nil,
 			})
+			c.Abort()
 			return
 		}
 

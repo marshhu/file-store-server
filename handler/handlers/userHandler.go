@@ -62,7 +62,7 @@ func AuthHandler(c *gin.Context){
 }
 
 func GetUserByTokenHandler(c *gin.Context){
-	token := c.Param("token")
+	token := c.Query("token")
 	if len(token) <= 0{
 		c.JSON(http.StatusBadRequest, resp.Response{
 			Code: resp.INVALID_PARAMS,

@@ -16,11 +16,11 @@ func TestMain(m *testing.M) {
 
 var fileSha1 string = "erfegfb45t5y6u76ihgmu7"
 
-func TestFileInfoWorkFlow(t *testing.T) {
-	t.Run("Add", testAddFileInfo)
-	t.Run("Exist", testIsExistFileInfo)
-	t.Run("Get", testGetFileInfo)
-}
+//func TestFileInfoWorkFlow(t *testing.T) {
+//	t.Run("Add", testAddFileInfo)
+//	t.Run("Exist", testIsExistFileInfo)
+//	t.Run("Get", testGetFileInfo)
+//}
 func testAddFileInfo(t *testing.T) {
 	err := AddFileInfo(fileSha1, "avatar.jpg",23400,"tmp/avatar.jpg")
 	if err != nil {

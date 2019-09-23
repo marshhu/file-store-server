@@ -1,6 +1,7 @@
 package dbos
 
 import (
+	"fmt"
 	"github.com/marshhu/file-store-server/util"
 	"log"
 	"testing"
@@ -21,7 +22,8 @@ func testAddUser(t *testing.T) {
 		email string = ""
 		profile string = ""
 	)
-	err := AddUser(username,util.PwdMD5(password),avatar,phone,email,profile)
+    fmt.Println(util.MD5(password))
+	err := AddUser(username,util.MD5(password),avatar,phone,email,profile)
 
 	if err != nil {
 		t.Errorf("Error of AddFileInfo:%v", err)
@@ -29,7 +31,8 @@ func testAddUser(t *testing.T) {
 }
 
 func testCheckUser(t *testing.T) {
-	 result,err :=CheckUser(username,util.PwdMD5(password))
+	 result,err :=CheckUser(username,util.MD5(password))
+	 fmt.Println(util.MD5(password))
 	 if err != nil{
 		 t.Errorf("Error of CheckUser:%v", err)
 	 }
