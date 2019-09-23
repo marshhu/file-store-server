@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/marshhu/file-store-server/conf"
 	"github.com/marshhu/file-store-server/dbos"
 	"github.com/marshhu/file-store-server/handler/resp"
 	"github.com/marshhu/file-store-server/util"
@@ -18,6 +20,17 @@ func PingHandler(c *gin.Context){
 }
 
 func UploadSingleHandler(c *gin.Context){
+	maxUploadSize := conf.AppSetting.MaxUploadSize
+	c.Request.Body = http.MaxBytesReader(c.Writer,c.Request.Body,maxUploadSize)
+    if err := c.Request.ParseMultipartForm(maxUploadSize);err != nil{
+		c.JSON(http.StatusBadRequest, resp.Response{
+			Code: resp.INVALID_PARAMS,
+			Msg:  fmt.Sprintf("文件太大，超过了%dM",maxUploadSize),
+			Data: nil,
+		})
+		return
+	}
+
 	// single file
 	f, _ := c.FormFile("file")
 	if f == nil{
@@ -105,5 +118,33 @@ func UploadMultiHandler(c *gin.Context){
 		Code: resp.SUCCESS,
 		Msg:  "上传文件成功",
 		Data: nil,
+	})
+}
+
+func GetFileInfoHandler(c *gin.Context){
+	fileSha1 := c.Param("fileSha1")
+	if len(fileSha1) <=0{
+		c.JSON(http.StatusBadRequest, resp.Response{
+			Code: resp.INVALID_PARAMS,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+	fileInfo,err := dbos.GetFileInfo(fileSha1)
+	if err != nil{
+		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, resp.Response{
+			Code: resp.ERROR,
+			Msg:  "获取文件信息发生错误",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Response{
+		Code: resp.SUCCESS,
+		Msg:  "OK",
+		Data: fileInfo,
 	})
 }
