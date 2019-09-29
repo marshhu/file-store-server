@@ -69,3 +69,34 @@ func GetFileInfo(fileSha1 string) (*FileInfo,error){
 	fileInfo.UpdateAt,_ = time.Parse("2006-01-02 15:04:05",updateTime)
 	return &fileInfo,nil
 }
+
+func GetFileList() ([]*FileInfo,error){
+	stmtOut, err := dbConn.Prepare("select id,file_sha1,file_name,file_size,file_address,create_at,update_at,status from file_info order by create_at desc;")
+	defer stmtOut.Close()
+	if err != nil {
+		log.Printf("%s", err)
+		return nil,err
+	}
+
+	rows,err :=stmtOut.Query()
+	if err !=nil && err != sql.ErrNoRows{
+		return nil, err
+	}
+	if err == sql.ErrNoRows{
+		return nil,nil
+	}
+	var res []*FileInfo
+
+	var createTime string
+	var updateTime string
+	for rows.Next(){
+		fileInfo := FileInfo{}
+		if err = rows.Scan(&fileInfo.ID,&fileInfo.FileSha1,&fileInfo.FileName,&fileInfo.FileSize,&fileInfo.FileAddress,&createTime,&updateTime,&fileInfo.Status);err != nil{
+			return res,err
+		}
+		fileInfo.CreateAt,_ = time.Parse("2006-01-02 15:04:05",createTime)
+		fileInfo.UpdateAt,_ = time.Parse("2006-01-02 15:04:05",updateTime)
+		res = append(res,&fileInfo)
+	}
+	return res,nil
+}

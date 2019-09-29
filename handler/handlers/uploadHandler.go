@@ -19,6 +19,11 @@ func PingHandler(c *gin.Context){
 	})
 }
 
+type FileInfoResp struct{
+	FileSha1 string 	`json:file_sha1`
+	FileName string		`json:"file_name"`
+	FileAddress string	`json:"file_address"`
+}
 func UploadSingleHandler(c *gin.Context){
 	maxUploadSize := conf.AppSetting.MaxUploadSize
 	c.Request.Body = http.MaxBytesReader(c.Writer,c.Request.Body,maxUploadSize)
@@ -68,7 +73,7 @@ func UploadSingleHandler(c *gin.Context){
 		c.JSON(http.StatusOK, resp.Response{
 			Code: resp.SUCCESS,
 			Msg:  "上传文件成功",
-			Data: map[string]string{"file_sha1":fileInfo.FileSha1,"file_name":fileInfo.FileName,"file_address":fileInfo.FileAddress},
+			Data: FileInfoResp{FileSha1:fileInfo.FileSha1,FileName:fileInfo.FileName,FileAddress:fileInfo.FileAddress},
 		})
 		return
 	}
@@ -97,7 +102,7 @@ func UploadSingleHandler(c *gin.Context){
 	c.JSON(http.StatusOK, resp.Response{
 		Code: resp.SUCCESS,
 		Msg:  "上传文件成功",
-		Data: map[string]string{"file_sha1":fileSha1,"file_name":fileName,"file_address":fileAddress},
+		Data:FileInfoResp{FileSha1:fileSha1,FileName:fileName,FileAddress:fileAddress},
 	})
 }
 
@@ -146,5 +151,27 @@ func GetFileInfoHandler(c *gin.Context){
 		Code: resp.SUCCESS,
 		Msg:  "OK",
 		Data: fileInfo,
+	})
+}
+
+func GetFileListHandler(c *gin.Context){
+   fileList,err :=	dbos.GetFileList()
+	if err != nil{
+		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, resp.Response{
+			Code: resp.ERROR,
+			Msg:  "获取文件信息发生错误",
+			Data: nil,
+		})
+		return
+	}
+   var respData []*FileInfoResp
+   for _,value := range fileList{
+	   respData =  append(respData,&FileInfoResp{FileSha1:value.FileSha1,FileName:value.FileName,FileAddress:value.FileAddress})
+   }
+	c.JSON(http.StatusOK, resp.Response{
+		Code: resp.SUCCESS,
+		Msg:  "OK",
+		Data: respData,
 	})
 }

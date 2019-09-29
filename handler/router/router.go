@@ -36,8 +36,8 @@ func InitRouter() *gin.Engine {
 	api.Use(middleware.JWT())
 	{
 		api.POST("/upload",handlers.UploadSingleHandler)
-		api.GET("/upload/:fileSha1",handlers.GetFileInfoHandler)
-
+		//api.GET("/upload/:fileSha1",handlers.GetFileInfoHandler)
+        api.GET("/upload/list",handlers.GetFileListHandler)
 		api.GET("/user/getInfo",handlers.GetUserByTokenHandler)
 	}
 	return r

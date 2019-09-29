@@ -1,8 +1,6 @@
 package conf
 
 import (
-	"github.com/go-ini/ini"
-	"log"
 	"time"
 )
 type App struct{
@@ -49,22 +47,22 @@ var (
 )
 
 
-func init(){
-	cfg,err := ini.Load("conf/app.ini")
-	if err != nil{
-		log.Fatalf(" fail to parse 'app.ini': %v", err)
-	}
-	cfg.Section("app").MapTo(AppSetting)
-	cfg.Section("server").MapTo(ServerSetting)
-	cfg.Section("database").MapTo(DBSetting)
-	cfg.Section("redis").MapTo(RedisSetting)
-	cfg.Section("oss").MapTo(OssSetting)
-
-	AppSetting.MaxUploadSize = 1024*1024*AppSetting.MaxUploadSize
-	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
-	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second
-	RedisSetting.IdleTimeout = RedisSetting.IdleTimeout * time.Second
-}
+//func init(){
+//	cfg,err := ini.Load("conf/app.ini")
+//	if err != nil{
+//		log.Fatalf(" fail to parse 'app.ini': %v", err)
+//	}
+//	cfg.Section("app").MapTo(AppSetting)
+//	cfg.Section("server").MapTo(ServerSetting)
+//	cfg.Section("database").MapTo(DBSetting)
+//	cfg.Section("redis").MapTo(RedisSetting)
+//	cfg.Section("oss").MapTo(OssSetting)
+//
+//	AppSetting.MaxUploadSize = 1024*1024*AppSetting.MaxUploadSize
+//	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
+//	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second
+//	RedisSetting.IdleTimeout = RedisSetting.IdleTimeout * time.Second
+//}
 
 
 
